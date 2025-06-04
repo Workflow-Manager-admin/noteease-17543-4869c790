@@ -1,11 +1,14 @@
 import type { MetaFunction } from "@remix-run/node";
-import React, { useState, useMemo, ChangeEvent } from "react";
+import { useState, useMemo, ChangeEvent } from "react";
 
 // PUBLIC_INTERFACE
 export const meta: MetaFunction = () => {
   return [
     { title: "NoteEase - Your Personal Notes" },
-    { name: "description", content: "Create, edit, delete, search and categorize your notes with NoteEase." },
+    {
+      name: "description",
+      content: "Create, edit, delete, search and categorize your notes with NoteEase.",
+    },
   ];
 };
 
@@ -29,7 +32,9 @@ export default function Index() {
 
   // Derive all categories (unique)
   const categories = useMemo(() => {
-    const cats = Array.from(new Set(notes.map((n) => n.category).filter((c) => c.trim() !== "")));
+    const cats = Array.from(
+      new Set(notes.map((n) => n.category).filter((c) => c.trim() !== ""))
+    );
     return ["All", ...cats];
   }, [notes]);
 
@@ -121,8 +126,13 @@ export default function Index() {
             {filteredNotes.map((note) => (
               <div
                 key={note.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => openEditNote(note)}
-                className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md cursor-pointer"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") openEditNote(note);
+                }}
+                className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4A90E2]"
               >
                 <h3 className="text-lg font-semibold text-gray-800">
                   {note.title || "<Untitled>"}
@@ -154,7 +164,9 @@ export default function Index() {
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-xl">
             <h2 className="text-xl font-bold mb-4">
-              {notes.some((n) => n.id === modalNote.id) ? "Edit Note" : "New Note"}
+              {notes.some((n) => n.id === modalNote.id)
+                ? "Edit Note"
+                : "New Note"}
             </h2>
             <input
               type="text"
